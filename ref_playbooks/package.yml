@@ -1,0 +1,18 @@
+---
+- hosts: group4
+  become: yes
+  tasks:
+      - name: install package in ubuntu
+        apt:
+            name: git
+            state: present
+            update_cache: yes
+        when: ansible_os_family == "Debian"
+
+      - name: install package in yum
+        yum:
+            name: git
+            state: present
+            update_cache: yes
+        when: ansible_os_family == "RedHat"
+

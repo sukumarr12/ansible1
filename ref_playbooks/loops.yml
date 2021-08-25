@@ -1,0 +1,14 @@
+---
+- hosts: ubuntu
+  become: true
+  gather_facts: false
+  tasks:
+      - name: install package in ubuntu
+        apt:
+            name: "{{ item }}"
+            state: present
+            update_cache: yes
+        with_items:
+            - git
+            - wget
+            - tree

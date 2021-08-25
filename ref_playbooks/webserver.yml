@@ -1,0 +1,35 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: install webserver in ubuntu
+      apt:
+          name: apache2
+          state: present
+      when: ansible_os_family == "Debian"
+
+    - name: install webserver in rhel
+      yum:
+        name: httpd
+        state: present
+      when: ansible_os_family == "RedHat"
+
+    - name: update index.html
+      template:
+          src: /home/devops/index.html.j2
+          dest: /var/www/html/index.html
+          backup: yes
+
+
+    - name: restart service in ubuntu
+      service:
+        name: apache2
+        state: restarted
+      when: ansible_os_family == "Debian"
+
+    - name: restart service in rhel
+      service:
+        name: httpd
+        state: restarted 
+      when: ansible_os_family == "RedHat"
+
