@@ -1,0 +1,13 @@
+---
+# tasks file for java
+- name: install java in ubuntu
+  apt:
+      name: "{{ java_ubuntu }}"
+      state: present
+  when: ansible_os_family == "Debian"
+
+- name: install java in rhel
+  yum:
+    name: "{{ java_rhel }}"
+    state: present
+  when: ansible_os_family == "RedHat"

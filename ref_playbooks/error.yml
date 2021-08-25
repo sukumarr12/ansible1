@@ -15,16 +15,14 @@
       when: ansible_os_family == "RedHat"
 
     - name: update index.html
-      template:
-          src: /home/devops/index.html.j2
-          dest: /var/www/html/index.html
-      notify:
-              - restart service in ubuntu
-              - restart service in rhel
-
-
-  handlers:
-
+      block:
+          - template:
+                 src: /home/devops/index.html
+                 dest: /var/www/html/index.html
+      rescue:
+              - debug: 
+                     msg: this is in rescue
+       
     - name: restart service in ubuntu
       service:
         name: apache2

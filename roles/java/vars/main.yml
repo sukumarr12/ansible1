@@ -1,0 +1,4 @@
+---
+# vars file for java
+java_ubuntu: openjdk-8-jdk
+java_rhel: java-1.8.0-openjdk
