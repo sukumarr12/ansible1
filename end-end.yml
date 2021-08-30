@@ -1,0 +1,8 @@
+---
+- hosts: all
+  become: yes
+  roles:
+          - {role: java, java_ubuntu: openjdk-11-jdk}
+          - {role: tomcat-install}
+          - {role: deploy}
+

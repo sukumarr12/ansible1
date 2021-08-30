@@ -1,0 +1,79 @@
+---
+- name: add user tomcat
+  shell:  sudo useradd -m -U -d /opt/tomcat -s /bin/false tomcat
+  ignore_errors: yes
+
+- name: tomcat install
+  block:
+    - name: wget the package
+      get_url:
+        url: https://www-eu.apache.org/dist/tomcat/tomcat-9/v{{ version }}/bin/apache-tomcat-{{ version }}.tar.gz
+        dest: /tmp
+    - name: extract the package
+      unarchive:
+        src: /tmp/apache-tomcat-{{ version }}.tar.gz
+        dest: /opt/tomcat
+    - name: create symlink
+      file:
+        src: /opt/tomcat/apache-tomcat-{{ version }}
+        dest: /opt/tomcat/latest
+        state: link
+  rescue:
+    - name: rescue block
+      debug: 
+         msg: this is rescued
+
+- name: give the ownership to tomcat
+  file:
+     path: /opt/tomcat
+     recurse: yes
+     owner: tomcat
+     group: tomcat
+
+- name: list the sh file in bin folder
+  shell: ls /opt/tomcat/latest/bin/*.sh
+  register: lst 
+
+- name: give the excutable premissions
+  file:   
+     path: "{{item}}"
+  with_items:  "{{lst.stdout_lines}}"  
+
+- name: create service file 
+  template:
+      src: templates/tomcat.service.j2
+      dest: /etc/systemd/system/tomcat.service
+
+- name: demon reload
+  systemd:
+      daemon_reload: yes
+
+- name: demon enabled
+  systemd:
+      name: tomcat
+      enabled: yes
+      #      state: restarted
+
+- name: add roles
+  lineinfile:
+    path: /opt/tomcat/latest/conf/tomcat-users.xml
+    insertbefore: '^</tomcat-users>'
+    line: "{{item}}"
+  with_items:
+    - <role rolename="admin-gui"/>
+    - <role rolename="manager-gui"/>
+    - <user username="admin" password="admin" roles="admin-gui,manager-gui"/>
+
+- name: enable manager app
+  lineinfile:
+    path: /opt/tomcat/latest/webapps/manager/META-INF/context.xml
+    state: absent
+    regexp: "{{item}}"
+  with_items:
+    - <Valve className="org.apache.catalina.valves.RemoteAddrValve"
+    - allow="127\.\d+\.\d+\.\d+|::1|0:0:0:0:0:0:0:1" />
+ 
+- name: restart tomcat
+  service:
+          name: tomcat
+          state: restarted 
