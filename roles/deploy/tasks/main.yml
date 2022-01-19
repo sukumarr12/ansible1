@@ -8,12 +8,12 @@
   rescue:
     - name: download from artifact
       get_url:
-        url: https://github.com/tejesh555/applogin/raw/master/target/applogin-1.0.war
+        url: https://github.com/tejesh555/applogin/raw/master/target/applogin.war
         dest: /tmp
 
 - name: copy artifact 
   copy:
-     src: /tmp/applogin-1.0.war
+     src: /tmp/applogin.war
      dest: /opt/tomcat/latest/webapps/applogin.war
      owner: tomcat
      group: tomcat
