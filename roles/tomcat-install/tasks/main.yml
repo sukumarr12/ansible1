@@ -37,6 +37,7 @@
 - name: give the excutable premissions
   file:   
      path: "{{item}}"
+     mode: 0777
   with_items:  "{{lst.stdout_lines}}"  
 
 - name: create service file 
