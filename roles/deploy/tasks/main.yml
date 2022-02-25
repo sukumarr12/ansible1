@@ -1,10 +1,18 @@
 ---
-- name: download artifact
+- name: block for copying locally
   block:
-    - name: copy from local
+    - name: get the war file version
+      shell: ls ./target/*.war
+      register: war_version
+
+    - name: copy the war file in appliation server
       copy:
-         src: ./target/applogin-1.1.war
-         dest: /tmp
+              src: ./target/"{{ war_version }}"
+              dest: /opt/tomcat/latest/webapps/
+              owner: tomcat
+              group: tomcat
+              mode: 0777
+
   rescue:
     - name: download from artifact
       get_url:
