@@ -1,32 +1,13 @@
 ---
-- name: block for copying locally
-  block:
-    - name: get the war file version
-      shell: ls ./target/*.war
-      register: war_version
-
-    - name: copy the war file in appliation server
-      copy:
-              src: ./target/"{{ war_version }}"
-              dest: /opt/tomcat/latest/webapps/
-              owner: tomcat
-              group: tomcat
-              mode: 0777
-
-  rescue:
-    - name: download from artifact
-      get_url:
-        url: https://github.com/sukumarr12/applogin/raw/master/target/applogin.war
-        dest: /tmp
-
-- name: copy artifact 
+- name: copy the artifact from local to target machine
   copy:
-     src: /tmp/applogin.war
-     dest: /home/devops/workspace/applogin/target/applogin.war
-     owner: tomcat
-     group: tomcat
+     src: /home/devops/workspace/end_to_end/applogin/target/applogin-1.1.war
+     dest: /tmp
+
+- name: deploy the artifact to tomcat
+  copy:
+     src: /tmp/applogin-1.1.war
+     dest: /opt/tomcat/latest/webapps/ 
      remote_src: yes
   notify:
-    - restart tomcat after deploy
-  
-
+    - restart tomcat
