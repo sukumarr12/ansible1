@@ -1,7 +1,7 @@
 ---
 - name: copy the artifact from local to target machine
   copy:
-     src: /home/devops/workspace/end_to_end/applogin/target/applogin-1.1.war
+     src: /home/devops/workspace/CI-CD/applogin/target/applogin.war
      dest: /tmp
 
 - name: deploy the artifact to tomcat
